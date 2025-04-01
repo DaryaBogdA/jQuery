@@ -1,10 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 </head>
 <body>
+
+<input id="input">
+<input type="button" value="Распаковка" id="btn">
+<p id="result"></p>
+
+
+<!--<div class="test">1</div>-->
+<!--<div class="test">2</div>-->
+<!--<p class="test">3</p>-->
+<script>
+  // console.log($.trim("        asd    f "));
+  // let test = $("div.test");
+  // for(let i = 0; i < test.length; i++){
+  //     test.get(i).style.color = "red";
+  // }
+  // setTimeout("$('p.test').get(0).style.color = 'green'", 2000);
+
+  function unpacking(str){
+    if(!str) return ""
+
+    let result = ""
+    let i = 0
+    while (i < str.length) {
+      let char = str[i];
+      let next_char = str[i + 1];
+      if (/\d/.test(char) && (i === 0 || !isNaN(next_char))) {
+        return ""
+      }
+
+      if (/\d/.test(next_char)) {
+        let repeat = parseInt(next_char, 10);
+
+        if (repeat > 0) {
+          result += char.repeat(repeat)
+        }
+        i+=2;
+      } else {
+        result += char
+        i++
+      }
+    }
+    return result
+  }
+
+
+
+
+  let btn = $("#btn").html()
+  let result = $("#result").html()
+
+  $("#btn").on("click", function () {
+    let input = $("#input").val()
+    $("#result").html(unpacking(input))
+  })
+</script>
 
 </body>
 </html>
