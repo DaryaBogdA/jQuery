@@ -1,10 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    </style>
+    </head>
 <body>
+
+<input id="input">
+<input type="button" value="Распаковка" id="btn">
+<p id="result"></p>
+
+
+<input id="input10_7_5">
+<input id="btn10_7_5" type="button">
+<ul id="ul10_7_5"></ul>
+
+<table id="table">
+  <tr>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+  </tr>
+</table>
+<input id="btn10_8_5" type="button">
+
+<table id="table10_9_5">
+  <tr>
+    <td></td><td></td><td></td><td></td><td></td><td></td>
+  </tr>
+  <tr>
+    <td></td><td></td><td>+</td><td></td><td></td><td></td>
+  </tr>
+  <tr>
+    <td></td><td></td><td></td><td></td><td></td><td></td>
+  </tr>
+  <tr>
+    <td></td><td></td><td></td><td></td><td></td><td>+</td>
+  </tr>
+  <tr>
+    <td></td><td></td><td></td><td></td><td></td><td></td>
+  </tr>
+  <tr>
+    <td></td><td></td><td></td><td></td><td></td><td></td>
+  </tr>
+</table>
+<input id="btn10_9_5" type="button">
+<!--<div class="test">1</div>-->
+<!--<div class="test">2</div>-->
+<!--<p class="test">3</p>-->
+<script>
+  // console.log($.trim("        asd    f "));
+  // let test = $("div.test");
+  // for(let i = 0; i < test.length; i++){
+  //     test.get(i).style.color = "red";
+  // }
+  // setTimeout("$('p.test').get(0).style.color = 'green'", 2000);
+
+  function unpacking(str){
+    if(!str) return ""
+
+    let result = ""
+    let i = 0
+    while (i < str.length) {
+      let char = str[i];
+      let next_char = str[i + 1];
+      if (/\d/.test(char) && (i === 0 || !isNaN(next_char))) {
+        return ""
+      }
+
+      if (/\d/.test(next_char)) {
+        let repeat = parseInt(next_char, 10);
+
+        if (repeat > 0) {
+          result += char.repeat(repeat)
+        }
+        i+=2;
+      } else {
+        result += char
+        i++
+      }
+    }
+    return result
+  }
+
+
+
+
+  let btn = $("#btn").html()
+  let result = $("#result").html()
+
+  $("#btn").on("click", function () {
+    let input = $("#input").val()
+    $("#result").html(unpacking(input))
+  })
+
+
+  function generate_word(word) {
+    if (word.length <= 1) {
+      return [word];
+    }
+
+    let permutations = [];
+    for (let i = 0; i < word.length; i++) {
+      let char = word[i];
+      let period = word.slice(0, i) + word.slice(i + 1);
+      let remaining_permutations = generate_word(period);
+
+      remaining_permutations.forEach(permutation => {
+        permutations.push(char + permutation);
+      });
+    }
+
+    return permutations;
+  }
+
+  function unpack(word) {
+    let permutations = generate_word(word);
+    let html = "";
+
+    permutations.forEach(permutation => {
+      html += `<li>${permutation}</li>`;
+    });
+
+    return html;
+  }
+
+  $("#btn10_7_5").on("click", function () {
+    let input = $("#input10_7_5").val()
+    $("#ul10_7_5").html(unpack(input))
+  })
+
+
+  $("#btn10_8_5").on("click", function () {
+    let $table = $("#table");
+    let rows = $table.find("tr");
+    let row_count = rows.length;
+    let col_count = rows.first().find("td").length;
+
+    let transposed = [];
+    for (let i = 0; i < col_count; i++) {
+      transposed[i] = [];
+    }
+
+    rows.each(function (row_index) {
+      $(this).find("td").each(function (col_index) {
+        transposed[col_index][row_index] = $(this).html();
+      });
+    });
+
+    $table.empty();
+
+    for (let i = 0; i < col_count; i++) {
+      let $new_row = $("<tr></tr>");
+      for (let j = 0; j < row_count; j++) {
+        $new_row.append(`<td>${transposed[i][j]}</td>`);
+      }
+      $table.append($new_row);
+    }
+  });
+
+
+  $("#btn10_9_5").on("click", function () {
+    let $table = $("#table10_9_5");
+    let rows = $table.find("tr");
+
+    rows.each(function (row_index) {
+      $(this).find("td").each(function (col_index) {
+        if ($(this).text() === "+") {
+          for (let i = row_index - 1; i <= row_index + 1; i++) {
+            for (let j = col_index - 1; j <= col_index + 1; j++) {
+              let $cell = rows.eq(i).find("td").eq(j);
+              if ($cell.length && $cell.text() !== "+") {
+                $cell.text("-");
+              }
+            }
+          }
+        }
+      });
+    });
+  });
+
+
+</script>
 
 </body>
 </html>
