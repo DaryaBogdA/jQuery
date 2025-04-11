@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        div {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="button"] {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+
+        #btn_ring_remove,
+        #btn_ring_queue_remove,
+        #btn_queue_with_priorite_remove {
+            background-color: #f44336;
+        }
+
+        #btn_ring_remove:hover,
+        #btn_ring_queue_remove:hover,
+        #btn_queue_with_priorite_remove:hover {
+            background-color: #d32f2f;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        li {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .priority-display {
+            color: #666;
+            font-style: italic;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <input id="input_ring">
+    <input type="button" id="btn_ring_add" value="Добавить элемент">
+    <input type="button" id="btn_ring_remove" value="Удалить элемент">
+    <ul id="ul_queue"></ul>
+</div>
+
+<div>
+    <input id="input_ring_queue">
+    <input type="button" id="btn_ring_queue_add" value="Добавить элемент">
+    <input type="button" id="btn_ring_queue_remove" value="Удалить элемент">
+    <ul id="ul_ring_queue"></ul>
+</div>
+
+<div>
+    <input id="input_element_queue_with_priorite">
+    <input type="number" id="input_priorite_queue_with_priorite">
+    <input type="button" id="btn_queue_with_priorite_add" value="Добавить элемент">
+    <input type="button" id="btn_queue_with_priorite_remove" value="Удалить элемент">
+    <ul id="ul_queue_with_priorite"></ul>
+</div>
+
+</body>
+<script>
+    class Queue{
+        constructor(){
+            this.items = []
+        }
+        enqueue(element) {
+            this.items.push(element);
+            this.show();
+        }
+
+        dequeue() {
+            if (this.is_empty()) {
+                alert("Пусто");
+                return
+            }
+            let removed = this.items.shift();
+            this.show();
+            return removed;
+        }
+
+        is_empty() {
+            return this.items.length === 0;
+        }
+
+        show() {
+            let ul = $('#ul_queue');
+            ul.empty();
+
+            this.items.forEach(item => {
+                ul.append($('<li>').text(item));
+            });
+        }
+
+        size() {
+            return this.items.length;
+        }
+    }
+
+    let queue = new Queue();
+
+
+    $('#btn_ring_add').click(function() {
+        let item = $('#input_ring').val();
+        if (item) {
+            queue.enqueue(item);
+            $('#input_ring').val('').focus();
+        }
+    });
+
+    $('#btn_ring_remove').click(function() {
+        queue.dequeue();
+    });
+
+
+
+
+    class RingQueue{
+        constructor(){
+            this.items = []
+        }
+        enqueue(element) {
+            this.items.push(element);
+            this.show();
+        }
+
+        dequeue() {
+            if (this.is_empty()) {
+                alert("Пусто");
+                return
+            }
+            let removed = this.items.shift();
+            this.enqueue(removed)
+            this.show();
+            return removed;
+        }
+
+        is_empty() {
+            return this.items.length === 0;
+        }
+
+        show() {
+            let ul_ring = $('#ul_ring_queue');
+            ul_ring.empty();
+
+            this.items.forEach(item => {
+                ul_ring.append($('<li>').text(item));
+            });
+        }
+
+        size() {
+            return this.items.length;
+        }
+    }
+
+    let ring_queue = new RingQueue();
+
+
+    $('#btn_ring_queue_add').click(function() {
+        let item = $('#input_ring_queue').val();
+        if (item) {
+            ring_queue.enqueue(item);
+            $('#input_ring_queue').val('').focus();
+        }
+    });
+
+    $('#btn_ring_queue_remove').click(function() {
+        ring_queue.dequeue();
+    });
+
+
+
+
+    class QueueWithPriorite{
+        constructor(){
+            this.items = []
+        }
+        enqueue(element, priority) {
+            let queueElement = { element, priority };
+            let added = false;
+
+            for (let i = 0; i < this.items.length; i++) {
+                if (queueElement.priority > this.items[i].priority) {
+                    this.items.splice(i, 0, queueElement);
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                this.items.push(queueElement);
+            }
+            this.show();
+        }
+
+        dequeue() {
+            if (this.is_empty()) {
+                alert("Пусто");
+                return
+            }
+            let removed = this.items.shift();
+            this.show();
+            return removed;
+        }
+
+        is_empty() {
+            return this.items.length === 0;
+        }
+
+        show() {
+            let ul_queue_with_priorite = $('#ul_queue_with_priorite');
+            ul_queue_with_priorite.empty();
+
+            this.items.forEach((item, index) => {
+                ul_queue_with_priorite.append(
+                    $('<li>')
+                        .html(`
+                        <span>${item.element}</span>
+                        <span>Приоритет: ${item.priority}</span>
+                    `)
+                );
+            });
+        }
+
+        size() {
+            return this.items.length;
+        }
+    }
+
+    let queue_with_priorite = new QueueWithPriorite();
+
+    $('#btn_queue_with_priorite_add').click(function() {
+        let elem = $('#input_element_queue_with_priorite').val();
+        let priorite = $('#input_priorite_queue_with_priorite').val();
+        if (elem && priorite) {
+            queue_with_priorite.enqueue(elem, parseInt(priorite));
+            $('#input_element_queue_with_priorite').val('').focus();
+            $('#input_priorite_queue_with_priorite').val('');
+        }
+    });
+
+    $('#btn_queue_with_priorite_remove').click(function() {
+        queue_with_priorite.dequeue();
+    });
+
+
+
+</script>
+</html>
