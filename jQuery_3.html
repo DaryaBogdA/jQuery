@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #calendar {
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .month {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            background-color: #ffffff;
+        }
+
+        .month h3 {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            margin: 0;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            text-align: center;
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        td.today {
+            background-color: #FFDD57;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="controls">
+    <button id="last_year">Предыдущий год</button>
+    <button id="now_years" disabled>Текущий год</button>
+    <button id="next_year">Следующий год</button>
+</div>
+<div id="calendar"></div>
+
+<script>
+    $(document).ready(function () {
+        let calendar_div = $('#calendar');
+        let now_year = new Date().getFullYear();
+
+        function generate_calendar(year) {
+            calendar_div.empty();
+            calendar_div.append(`<h2>${year}</h2>`);
+
+            let months = [
+                'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+            ];
+            let weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+            let today = new Date();
+
+            months.forEach((month, index) => {
+                let first_day = new Date(year, index, 1).getDay();
+                let day_in_month = new Date(year, index + 1, 0).getDate();
+
+                let month_table = `<div class="month"><h3>${month}</h3>`;
+                month_table += `<table><tr>${weekdays.map(day => `<th>${day}</th>`).join('')}</tr><tr>`;
+
+                let empty_day = first_day === 0 ? 6 : first_day - 1;
+                for (let i = 0; i < empty_day; i++) {
+                    month_table += '<td></td>';
+                }
+
+                for (let day = 1; day <= day_in_month; day++) {
+                    let is_today =
+                        day === today.getDate() &&
+                        index === today.getMonth() &&
+                        year === today.getFullYear();
+
+                    if ((empty_day + day - 1) % 7 === 0) {
+                        month_table += '</tr><tr>';
+                    }
+                    month_table += `<td class="${is_today ? 'today' : ''}">${day}</td>`;
+                }
+
+                month_table += '</tr></table></div>';
+                calendar_div.append(month_table);
+            });
+        }
+
+        function update_button() {
+            $('#now_years').prop('disabled', now_year);
+        }
+
+        generate_calendar(now_year);
+        update_button();
+
+        $('#last_year').click(function () {
+            now_year--;
+            generate_calendar(now_year);
+            update_button();
+        });
+
+        $('#next_year').click(function () {
+            now_year++;
+            generate_calendar(now_year);
+            update_button();
+        });
+    });
+
+</script>
+</body>
+</html>
