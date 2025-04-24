@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<input id="input" type="text">
+<button id="button">Тыкай</button>
+<canvas id="graph_line" width="400" height="200"></canvas>
+<canvas id="graph_log" width="400" height="200"></canvas>
+<canvas id="graph_power" width="400" height="200"></canvas>
+<script>
+    let chart_line, chart_log, chart_power;
+    $('button').click(function () {
+
+        let a = parseFloat($('#input').val());
+        let x_val = [];
+        let y_line = [];
+        let y_log = [];
+        let y_power = [];
+
+        for (let x = 1; x <= 10; x += 1) {
+            x_val.push(x);
+            y_line.push(x);
+            y_log.push(Math.log(x) / Math.log(a));
+            y_power.push(Math.pow(a, x));
+        }
+        if (chart_line) chart_line.destroy();
+        if (chart_log) chart_log.destroy();
+        if (chart_power) chart_power.destroy();
+
+        chart_line = new Chart($('#graph_line'), {
+            type: 'line',
+            data: {
+                labels: x_val,
+                datasets: [
+                    {
+                        label: 'y = x',
+                        data: y_line,
+                        borderColor: 'pink',
+                        fill: false,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'График y = x',
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'x',
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'y',
+                        },
+                    },
+                },
+            },
+        });
+
+        chart_log = new Chart($('#graph_log'), {
+            type: 'line',
+            data: {
+                labels: x_val,
+                datasets: [
+                    {
+                        label: `y = log_${a}(x)`,
+                        data: y_log,
+                        borderColor: 'red',
+                        fill: false,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: `График y = log_${a}(x)`,
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'x',
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'y',
+                        },
+                    },
+                },
+            },
+        });
+
+        chart_power = new Chart($('#graph_power'), {
+            type: 'line',
+            data: {
+                labels: x_val,
+                datasets: [
+                    {
+                        label: `y = ${a}^x`,
+                        data: y_power,
+                        borderColor: 'purple',
+                        fill: false,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: `График y = ${a}^x`,
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'x',
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'y',
+                        },
+                    },
+                },
+            },
+        });
+    });
+
+
+
+</script>
+</body>
+</html>
