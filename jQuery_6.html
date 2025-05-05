@@ -38,13 +38,6 @@
             box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.3);
         }
 
-        .start {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.7);
-        }
-
         button {
             margin-top: 20px;
             padding: 10px 20px;
@@ -76,34 +69,43 @@
 <p>Ходов: <span id="count">0</span></p>
 <p id="p"></p>
 <script>
-    for (let i = 0; i < 10; i++) {
-        let row = $('<tr></tr>');
-        for (let j = 0; j < 10; j++) {
-            let cell = $(`<td id="cell-${j}-${i}"></td>`);
-            row.append(cell);
+    function create_table() {
+        for (let i = 0; i < 10; i++) {
+            let row = $('<tr></tr>');
+            for (let j = 0; j < 10; j++) {
+                let cell = $(`<td id="cell-${j}-${i}"></td>`);
+                row.append(cell);
+            }
+            $('#table').append(row);
         }
-        $('#table').append(row);
     }
- let x = Math.floor(Math.random() * 10);
- let y = Math.floor(Math.random() * 10);
- let x_now = x;
- let y_now = y;
+    create_table()
+    function rundom(num_1){
+        return Math.floor(Math.random() * num_1)
+    }
+ let x_start = rundom(10)
+ let y_start = rundom(10)
+ let x_now = x_start;
+ let y_now = y_start;
 let count = 0;
 $('#button').on('click', function () {
     let interval = setInterval(function() {
-        let choise = Math.floor(Math.random() * 4) * 90;
-        if (choise === 0) y_now--;
-        else if (choise === 90) x_now++;
-        else if (choise === 180) y_now++;
-        else if (choise === 270) x_now--;
+        let choise = rundom(4)
+        let arrow = '';
+
+        if (choise === 0) { y_now--; arrow = '↑'; }
+        else if (choise === 1) { x_now++; arrow = '→'; }
+        else if (choise === 2) { y_now++; arrow = '↓'; }
+        else { x_now--; arrow = '←'; }
 
         x_now = (x_now + 10) % 10;
         y_now = (y_now + 10) % 10;
 
-        $(`#cell-${x_now}-${y_now}`).addClass(`red`);
+        $(".arrow").text("");
+        $(`#cell-${x_now}-${y_now}`).addClass("red").html(`<span class="arrow">${arrow}</span>`);
         count++;
         $("#count").text(count);
-        if (x === x_now && y === y_now) {
+        if (x_start === x_now && y_start === y_now) {
             clearInterval(interval);
             $('#p').text("Игрок вернулся на старт через " + count + " ходов!");
         }
