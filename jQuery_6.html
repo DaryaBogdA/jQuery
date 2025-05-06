@@ -83,6 +83,25 @@
     function rundom(num_1){
         return Math.floor(Math.random() * num_1)
     }
+    function win(x_start, x_now, y_start, y_now, interval, count){
+        if (x_start === x_now && y_start === y_now) {
+            clearInterval(interval);
+            $('#p').text("Игрок вернулся на старт через " + count + " ходов!");
+        }
+    }
+    function border(number){
+        return (number + 10) % 10;
+    }
+
+    function get_x_y_arrow(choise) {
+        let data = [
+            { x: 0, y: -1, arrow: '↑' },
+            { x: 1, y: 0, arrow: '→' },
+            { x: 0, y: 1, arrow: '↓' },
+            { x: -1, y: 0, arrow: '←' }
+        ];
+        return data[choise];
+    }
  let x_start = rundom(10)
  let y_start = rundom(10)
  let x_now = x_start;
@@ -91,24 +110,17 @@ let count = 0;
 $('#button').on('click', function () {
     let interval = setInterval(function() {
         let choise = rundom(4)
-        let arrow = '';
+        let data = get_x_y_arrow(choise);
 
-        if (choise === 0) { y_now--; arrow = '↑'; }
-        else if (choise === 1) { x_now++; arrow = '→'; }
-        else if (choise === 2) { y_now++; arrow = '↓'; }
-        else { x_now--; arrow = '←'; }
+        x_now = border(x_now + data.x);
+        y_now = border(y_now + data.y);
 
-        x_now = (x_now + 10) % 10;
-        y_now = (y_now + 10) % 10;
 
         $(".arrow").text("");
-        $(`#cell-${x_now}-${y_now}`).addClass("red").html(`<span class="arrow">${arrow}</span>`);
+        $(`#cell-${x_now}-${y_now}`).addClass("red").html(`<span class="arrow">${data.arrow}</span>`);
         count++;
         $("#count").text(count);
-        if (x_start === x_now && y_start === y_now) {
-            clearInterval(interval);
-            $('#p').text("Игрок вернулся на старт через " + count + " ходов!");
-        }
+        win(x_start, x_now, y_start, y_now, interval, count);
     }, 500);
 })
 </script>
