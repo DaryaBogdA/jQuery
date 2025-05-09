@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f4f4f4;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            text-align: center;
+            background-color: #ffffff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            transition: background-color 0.3s ease-in-out;
+            border-radius: 5px;
+        }
+
+        .red {
+            background-color: #ff4d4d;
+            box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        p {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+    </style>
+</head>
+<body>
+<table id="table"></table>
+<button id="button">Старт</button>
+<p>Ходов: <span id="count">0</span></p>
+<p id="p"></p>
+<script>
+    function create_table() {
+        for (let i = 0; i < 10; i++) {
+            let row = $('<tr></tr>');
+            for (let j = 0; j < 10; j++) {
+                let cell = $(`<td id="cell-${j}-${i}"></td>`);
+                row.append(cell);
+            }
+            $('#table').append(row);
+        }
+    }
+    create_table()
+    function rundom(num_1){
+        return Math.floor(Math.random() * num_1)
+    }
+    function win(x_start, x_now, y_start, y_now, interval, count){
+        if (x_start === x_now && y_start === y_now) {
+            clearInterval(interval);
+            $('#p').text("Игрок вернулся на старт через " + count + " ходов!");
+        }
+    }
+    function border(number){
+        return (number + 10) % 10;
+    }
+
+    function get_x_y_arrow(choise) {
+        let data = [
+            { x: 0, y: -1, arrow: '↑' },
+            { x: 1, y: 0, arrow: '→' },
+            { x: 0, y: 1, arrow: '↓' },
+            { x: -1, y: 0, arrow: '←' }
+        ];
+        return data[choise];
+    }
+ let x_start = rundom(10)
+ let y_start = rundom(10)
+ let x_now = x_start;
+ let y_now = y_start;
+let count = 0;
+$('#button').on('click', function () {
+    let interval = setInterval(function() {
+        let choise = rundom(4)
+        let data = get_x_y_arrow(choise);
+
+        x_now = border(x_now + data.x);
+        y_now = border(y_now + data.y);
+
+
+        $(".arrow").text("");
+        $(`#cell-${x_now}-${y_now}`).addClass("red").html(`<span class="arrow">${data.arrow}</span>`);
+        count++;
+        $("#count").text(count);
+        win(x_start, x_now, y_start, y_now, interval, count);
+    }, 500);
+})
+</script>
+</body>
+</html>
