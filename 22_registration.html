@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+<body>
+  <div class="container">
+    <input id="name" name="name" type="text" placeholder="Введите имя">
+    <input id="lastname" name="lastname" type="text" placeholder="Введите фамилия">
+    <input id="email" name="email" type="email" placeholder="Введите адрес электронной почты">
+    <input id="phone" name="phone" type="text" placeholder="Введите номер телефона">
+    <input id="login" name="login" type="text" placeholder="Введите логин">
+    <input id="password" name="password" type="password" placeholder="Введите пароль">
+    <input id="password_reset" name="password" type="password" placeholder="Повторите пароль">
+    <p id="mess" style="color: red"></p>
+    <button id="registration">Зарегистрироваться</button><br>
+    <a href="22_login.html">Назад</a>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#registration").on('click', function() {
+        let name = $('#name').val();
+        let lastname = $('#lastname').val();
+        let email = $('#email').val();
+        let phone = $('#phone').val();
+        let login = $('#login').val();
+        let password = $('#password').val();
+        let password_reset = $('#password_reset').val();
+
+        $.ajax({
+          url: 'https://test/registration_22.php',
+          type: 'POST',
+          data: {'name':name, 'lastname':lastname, 'email':email, 'phone':phone, 'login':login, 'password':password, 'password_reset':password_reset},
+          dataType: 'json',
+          success: function(response) {
+            if (response.status === "error") {
+              $("#mess").text(response.message);
+            } else {
+              $("#mess").text(" ");
+              window.location.href = "22_login.html";
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
