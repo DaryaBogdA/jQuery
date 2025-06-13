@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  p {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+<body>
+  <div class="container">
+    <input id="login" name="login" type="text" placeholder="Введите логин">
+    <input id="password" name="password" type="password" placeholder="Введите пароль">
+    <button id="log">Войти</button>
+    <p>Нет аккаунта? <a href="22_registration.html">Зарегистрироваться</a></p>
+    <p id="mess" style="color: red"></p>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#log").on('click', function() {
+        let login = $('#login').val();
+        let password = $('#password').val();
+
+
+        $.ajax({
+          url: 'https://test/login_22.php',
+          type: 'POST',
+          data: {'login':login, 'password':password},
+          dataType: 'json',
+          success: function(response) {
+            if (response.status === "error") {
+              $("#mess").text(response.message);
+            } else {
+              $("#mess").text(response.message);
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
