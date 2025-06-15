@@ -66,18 +66,67 @@
 </style>
 <body>
   <div class="container">
-    <input id="login" name="login" type="text" placeholder="Введите логин">
-    <input id="password" name="password" type="password" placeholder="Введите пароль">
-    <button id="log">Войти</button>
-    <p>Нет аккаунта? <a href="22_registration.html">Зарегистрироваться</a></p>
+    <input id="login_log" style="display: flex" name="login" type="text" placeholder="Введите логин">
+    <input id="password_log" style="display: flex" name="password" type="password" placeholder="Введите пароль">
+    <button id="log" style="display: flex">Войти</button>
+
+    <input id="name" style="display: none"  name="name" type="text" placeholder="Введите имя">
+    <input id="lastname" style="display: none" name="lastname" type="text" placeholder="Введите фамилия">
+    <input id="email" style="display: none" name="email" type="email" placeholder="Введите адрес электронной почты">
+    <input id="phone" style="display: none" name="phone" type="text" placeholder="Введите номер телефона">
+    <input id="login" style="display: none" name="login" type="text" placeholder="Введите логин">
+    <input id="password" style="display: none" name="password" type="password" placeholder="Введите пароль">
+    <input id="password_reset" style="display: none" name="password" type="password" placeholder="Повторите пароль">
     <p id="mess" style="color: red"></p>
+    <button style="display: none" id="registration">Зарегистрироваться</button><br>
+    <p>Нет аккаунта? <a id="reg">Зарегистрироваться</a></p>
+    <a href="22_login.html"  style="display: none">Назад</a>
   </div>
 
   <script>
     $(document).ready(function () {
-      $("#log").on('click', function() {
+      $('#reg').on('click', function () {
+        $('#login_log').toggle();
+        $('#password_log').toggle();
+        $('#log').toggle();
+        $('#name').toggle();
+        $('#lastname').toggle();
+        $('#email').toggle();
+        $('#phone').toggle();
+        $('#login').toggle();
+        $('#password').toggle();
+        $('#password_reset').toggle();
+        $('#registration').toggle();
+      })
+
+      $("#registration").on('click', function() {
+        let name = $('#name').val();
+        let lastname = $('#lastname').val();
+        let email = $('#email').val();
+        let phone = $('#phone').val();
         let login = $('#login').val();
         let password = $('#password').val();
+        let password_reset = $('#password_reset').val();
+
+        $.ajax({
+          url: 'https://test/registration_22.php',
+          type: 'POST',
+          data: {'name':name, 'lastname':lastname, 'email':email, 'phone':phone, 'login':login, 'password':password, 'password_reset':password_reset},
+          dataType: 'json',
+          success: function(response) {
+            if (response.status === "error") {
+              $("#mess").text(response.message);
+            } else {
+              $("#mess").text(" ");
+              window.location.href = "22_login.html";
+            }
+          }
+        });
+      });
+
+      $("#log").on('click', function() {
+        let login = $('#login_log').val();
+        let password = $('#password_log').val();
 
 
         $.ajax({
@@ -89,7 +138,7 @@
             if (response.status === "error") {
               $("#mess").text(response.message);
             } else {
-              $("#mess").text(response.message);
+              window.location.href = response.redirect;
             }
           }
         });
