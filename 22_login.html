@@ -65,39 +65,33 @@
   }
 </style>
 <body>
-  <div class="container">
-    <input id="login_log" style="display: flex" name="login" type="text" placeholder="Введите логин">
-    <input id="password_log" style="display: flex" name="password" type="password" placeholder="Введите пароль">
-    <button id="log" style="display: flex">Войти</button>
-
-    <input id="name" style="display: none"  name="name" type="text" placeholder="Введите имя">
-    <input id="lastname" style="display: none" name="lastname" type="text" placeholder="Введите фамилия">
-    <input id="email" style="display: none" name="email" type="email" placeholder="Введите адрес электронной почты">
-    <input id="phone" style="display: none" name="phone" type="text" placeholder="Введите номер телефона">
-    <input id="login" style="display: none" name="login" type="text" placeholder="Введите логин">
-    <input id="password" style="display: none" name="password" type="password" placeholder="Введите пароль">
-    <input id="password_reset" style="display: none" name="password" type="password" placeholder="Повторите пароль">
-    <p id="mess" style="color: red"></p>
-    <button style="display: none" id="registration">Зарегистрироваться</button><br>
-    <p id="no">Нет аккаунта? <a id="reg">Зарегистрироваться</a></p>
-    <a href="22_login.html"  style="display: none">Назад</a>
-    <h1 id="h" style="display: none"></h1>
+  <div id="log_div" class="container">
+    <input id="login_log" name="login" type="text" placeholder="Введите логин">
+    <input id="password_log" name="password" type="password" placeholder="Введите пароль">
+    <button id="log">Войти</button>
+    <p>Нет аккаунта? <a>Зарегистрироваться</a></p>
   </div>
-
+  <div id="reg_div" style="display: none" class="container">
+    <input id="name"   name="name" type="text" placeholder="Введите имя">
+    <input id="lastname" name="lastname" type="text" placeholder="Введите фамилия">
+    <input id="email"  name="email" type="email" placeholder="Введите адрес электронной почты">
+    <input id="phone" name="phone" type="text" placeholder="Введите номер телефона">
+    <input id="login" name="login" type="text" placeholder="Введите логин">
+    <input id="password" name="password" type="password" placeholder="Введите пароль">
+    <input id="password_reset" name="password" type="password" placeholder="Повторите пароль">
+    <p id="mess" style="color: red"></p>
+    <button id="registration">Зарегистрироваться</button><br>
+    <p>Нет аккаунта? <a>Зарегистрироваться</a></p>
+  </div>
+  <div id="h" style="display: none" class="container">
+    <h1></h1>
+  </div>
   <script>
     $(document).ready(function () {
-      $('#reg').on('click', function () {
-        $('#login_log').toggle();
-        $('#password_log').toggle();
-        $('#log').toggle();
-        $('#name').toggle();
-        $('#lastname').toggle();
-        $('#email').toggle();
-        $('#phone').toggle();
-        $('#login').toggle();
-        $('#password').toggle();
-        $('#password_reset').toggle();
-        $('#registration').toggle();
+      $('a').on('click', function () {
+        $('#log_div').toggle();
+        $('#reg_div').toggle();
+
       })
 
       $("#registration").on('click', function() {
@@ -136,18 +130,9 @@
             if (response.status === "error") {
               $("#mess").text(response.message);
             } else {
-              $('#login_log').hide();
-              $('#password_log').hide();
-              $('#log').hide();
-              $('#name').hide();
-              $('#lastname').hide();
-              $('#email').hide();
-              $('#phone').hide();
-              $('#login').hide();
-              $('#password').hide();
-              $('#password_reset').hide();
-              $('#registration').hide();
-              $('#no').hide();
+              $('#log_div').hide();
+              $('#reg_div').hide();
+
               $('#h').text("Привет, " + response.login).show();
 
             }
