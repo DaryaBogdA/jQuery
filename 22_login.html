@@ -79,8 +79,9 @@
     <input id="password_reset" style="display: none" name="password" type="password" placeholder="Повторите пароль">
     <p id="mess" style="color: red"></p>
     <button style="display: none" id="registration">Зарегистрироваться</button><br>
-    <p>Нет аккаунта? <a id="reg">Зарегистрироваться</a></p>
+    <p id="no">Нет аккаунта? <a id="reg">Зарегистрироваться</a></p>
     <a href="22_login.html"  style="display: none">Назад</a>
+    <h1 id="h" style="display: none"></h1>
   </div>
 
   <script>
@@ -116,9 +117,6 @@
           success: function(response) {
             if (response.status === "error") {
               $("#mess").text(response.message);
-            } else {
-              $("#mess").text(" ");
-              window.location.href = "22_login.html";
             }
           }
         });
@@ -138,7 +136,20 @@
             if (response.status === "error") {
               $("#mess").text(response.message);
             } else {
-              window.location.href = response.redirect;
+              $('#login_log').hide();
+              $('#password_log').hide();
+              $('#log').hide();
+              $('#name').hide();
+              $('#lastname').hide();
+              $('#email').hide();
+              $('#phone').hide();
+              $('#login').hide();
+              $('#password').hide();
+              $('#password_reset').hide();
+              $('#registration').hide();
+              $('#no').hide();
+              $('#h').text("Привет, " + response.login).show();
+
             }
           }
         });
