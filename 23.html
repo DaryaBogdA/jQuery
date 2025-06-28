@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Календарь по годам</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+            min-width: 100px;
+        }
+        .highlight {
+            background-color: #ff7070;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<button id="btn_last">Прошлый</button>
+<button id="btn_now"></button>
+<button id="btn_next">Следующий</button>
+
+<div id="calendar_container"></div>
+
+<script>
+    let current_year = new Date().getFullYear();
+
+    const month_names = [
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    ];
+
+    const day_names_short = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+
+    function change_calendar(year) {
+        $.ajax({
+            url: 'https://test/23.php',
+            type: 'GET',
+            data: { year: year },
+            dataType: 'json',
+            success: function (response) {
+                if (response.dates) {
+                    generate_calendar(year, response.dates);
+                } else {
+                    generate_calendar(year, []);
+                }
+            },
+            error: function () {
+                generate_calendar(year, []);
+            }
+        });
+    }
+
+    function generate_calendar(year, highlighted_dates) {
+        let html = `<h2>${year}</h2><table>`;
+
+        for (let month = 0; month < 12; month++) {
+            html += `<tr><th colspan="7">${month_names[month]}</th></tr><tr>`;
+            for (let day_name of day_names_short) {
+                html += `<td><b>${day_name}</b></td>`;
+            }
+            html += `</tr><tr>`;
+
+            let first_day = new Date(year, month, 1).getDay();
+            let offset_day = first_day === 0 ? 6 : first_day - 1;
+            let total_days = new Date(year, month + 1, 0).getDate();
+            let cell_count = 0;
+
+            for (let i = 0; i < offset_day; i++) {
+                html += `<td></td>`;
+                cell_count++;
+            }
+
+            for (let day = 1; day <= total_days; day++) {
+                let is_marked = highlighted_dates?.some(date_obj =>
+                    date_obj.day === day && date_obj.month === month && date_obj.year === year
+                );
+                let cell_class = is_marked ? 'highlight' : '';
+                html += `<td class="${cell_class}">${day}</td>`;
+                cell_count++;
+                if (cell_count % 7 === 0 && day !== total_days) {
+                    html += `</tr><tr>`;
+                }
+            }
+
+            while (cell_count % 7 !== 0) {
+                html += `<td></td>`;
+                cell_count++;
+            }
+
+            html += `</tr>`;
+        }
+
+        html += `</table>`;
+        $('#calendar_container').html(html);
+        $('#btn_now').text(year);
+    }
+
+    $(document).ready(function () {
+        change_calendar(current_year);
+
+        $('#btn_last').click(function () {
+            current_year--;
+            change_calendar(current_year);
+        });
+
+        $('#btn_next').click(function () {
+            current_year++;
+            change_calendar(current_year);
+        });
+
+        $('#btn_now').click(function () {
+            current_year = new Date().getFullYear();
+            change_calendar(current_year);
+        });
+    });
+</script>
+
+</body>
+</html>
