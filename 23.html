@@ -9,22 +9,27 @@
             font-family: Arial, sans-serif;
             padding: 20px;
         }
+
         button {
             padding: 10px 20px;
             margin-right: 10px;
             margin-bottom: 15px;
             font-size: 16px;
         }
+
         table {
             border-collapse: collapse;
             width: 100%;
         }
+
         th, td {
             border: 1px solid black;
             padding: 10px;
             text-align: center;
             min-width: 100px;
+            cursor: pointer;
         }
+
         .highlight {
             background-color: #ff7070;
             color: white;
@@ -34,9 +39,9 @@
 </head>
 <body>
 
-<button id="btn_last">Прошлый</button>
-<button id="btn_now"></button>
-<button id="btn_next">Следующий</button>
+<button id="btn_last"></button>
+<button id="btn_now" disabled></button>
+<button id="btn_next"></button>
 
 <div id="calendar_container"></div>
 
@@ -50,21 +55,26 @@
 
     const day_names_short = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
+    function update_year_buttons() {
+        $('#btn_last').text(current_year - 1).prop('disabled', false);
+        $('#btn_now').text(current_year).prop('disabled', true);
+        $('#btn_next').text(current_year + 1).prop('disabled', false);
+    }
+
     function change_calendar(year) {
         $.ajax({
             url: 'https://test/23.php',
             type: 'GET',
-            data: { year: year },
+            data: {year: year},
             dataType: 'json',
             success: function (response) {
-                if (response.dates) {
-                    generate_calendar(year, response.dates);
-                } else {
-                    generate_calendar(year, []);
-                }
+                const dates = response.status === "success" ? response.dates : [];
+                generate_calendar(year, dates);
+                update_year_buttons();
             },
             error: function () {
                 generate_calendar(year, []);
+                update_year_buttons();
             }
         });
     }
@@ -90,11 +100,21 @@
             }
 
             for (let day = 1; day <= total_days; day++) {
-                let is_marked = highlighted_dates?.some(date_obj =>
-                    date_obj.day === day && date_obj.month === month && date_obj.year === year
+                let is_marked = highlighted_dates.some(obj =>
+                    obj.day === day && obj.month === (month + 1) && obj.year === year
                 );
+
                 let cell_class = is_marked ? 'highlight' : '';
-                html += `<td class="${cell_class}">${day}</td>`;
+                let cell_id = `cell_${year}_${month + 1}_${day}`;
+
+                html += `<td
+          id="${cell_id}"
+          data-year="${year}"
+          data-month="${month + 1}"
+          data-day="${day}"
+          class="${cell_class}"
+        >${day}</td>`;
+
                 cell_count++;
                 if (cell_count % 7 === 0 && day !== total_days) {
                     html += `</tr><tr>`;
@@ -111,6 +131,31 @@
 
         html += `</table>`;
         $('#calendar_container').html(html);
+
+
+        $('#calendar_container td[data-day]').off('click').on('click', function () {
+            const day = $(this).data('day');
+            const month = $(this).data('month');
+            const year = $(this).data('year');
+            const cell = $(this);
+
+            $.ajax({
+                url: 'https://test/23_add_delete.php',
+                type: 'GET',
+                data: {year, month, day},
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status === "success") {
+                        if (response.color === true) {
+                            cell.addClass('highlight');
+                        } else {
+                            cell.removeClass('highlight');
+                        }
+                    }
+                },
+            });
+        });
+
         $('#btn_now').text(year);
     }
 
@@ -124,11 +169,6 @@
 
         $('#btn_next').click(function () {
             current_year++;
-            change_calendar(current_year);
-        });
-
-        $('#btn_now').click(function () {
-            current_year = new Date().getFullYear();
             change_calendar(current_year);
         });
     });
