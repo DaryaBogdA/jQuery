@@ -141,8 +141,8 @@
 
             $.ajax({
                 url: 'https://test/23_add_delete.php',
-                type: 'GET',
-                data: {year, month, day},
+                type: 'POST',
+                data: {"year" : year, "month" : month, "day" : day},
                 dataType: 'json',
                 success: function (response) {
                     if (response.status === "success") {
