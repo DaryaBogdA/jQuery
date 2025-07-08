@@ -62,20 +62,21 @@
     }
 
     function change_calendar(year) {
+        let dates;
         $.ajax({
             url: 'https://test/23.php',
             type: 'GET',
             data: {year: year},
             dataType: 'json',
             success: function (response) {
-                const dates = response.status === "success" ? response.dates : [];
-                generate_calendar(year, dates);
-                update_year_buttons();
+                dates = response.status === "success" ? response.dates : [];
             },
             error: function () {
-                generate_calendar(year, []);
-                update_year_buttons();
+                dates = []
             }
+        }).always(function () {
+            generate_calendar(year, dates);
+            update_year_buttons();
         });
     }
 
@@ -142,17 +143,13 @@
             $.ajax({
                 url: 'https://test/23_add_delete.php',
                 type: 'POST',
-                data: {"year" : year, "month" : month, "day" : day},
+                data: {"year": year, "month": month, "day": day},
                 dataType: 'json',
                 success: function (response) {
                     if (response.status === "success") {
-                        if (response.color === true) {
-                            cell.addClass('highlight');
-                        } else {
-                            cell.removeClass('highlight');
-                        }
+                        response.color === true ? cell.addClass('highlight') : cell.removeClass('highlight');
                     }
-                },
+                }
             });
         });
 
